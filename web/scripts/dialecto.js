@@ -227,6 +227,7 @@ p.draw = function (ctx) {
 	var conditionSize = ctx.measureText(this.condition);
 	var topSize = this.separator.copy().addVertically(conditionSize);
 	var size = this.getSize(ctx);
+	
 	ctx.beginPath();
 	ctx.moveTo(-size.width / 2, 0);
 	ctx.lineTo(size.width / 2, 0);
@@ -237,6 +238,7 @@ p.draw = function (ctx) {
 	ctx.moveTo(-size.width / 2, topSize.height);
 	ctx.lineTo(size.width / 2, topSize.height);
 	ctx.stroke ();
+	
 	ctx.fillText (this.condition, -conditionSize.width / 2);
 	this.sequence.drawAt (ctx, 0, topSize.height);
 }
@@ -252,4 +254,99 @@ p.hitTestChild = function (ctx, x, y) {
 	var conditionSize = ctx.measureText(this.condition);
 	var topSize = this.separator.copy().addVertically(conditionSize);
 	return this.sequence.hitTest (ctx, 0, topSize.height);
+}
+
+// For
+Dialecto.For = function (counter, begin, end) {
+	this.iterator = new Dialecto.For.Iterator(counter, begin, end);
+	this.sequence = new Dialecto.Sequence();
+}
+
+Dialecto.For.prototype = p = new Dialecto.Element();
+
+p.draw = function (ctx) {
+	var iteratorSize = this.iterator.getSize(ctx);
+	var size = this.getSize(ctx);
+		
+	ctx.beginPath();
+	ctx.moveTo((iteratorSize.width - size.width)/2, 0);
+	ctx.lineTo(size.width/2, 0);
+	ctx.lineTo(size.width/2, size.height);
+	ctx.lineTo((iteratorSize.width - size.width)/2, size.height);
+	ctx.lineTo((iteratorSize.width - size.width)/2, (size.height + iteratorSize.height) / 2);
+	ctx.moveTo((iteratorSize.width - size.width)/2, (size.height - iteratorSize.height) / 2);
+	ctx.lineTo((iteratorSize.width - size.width)/2, 0);
+	//ctx.fill ();
+	ctx.stroke();
+	this.sequence.drawAt (ctx, iteratorSize.width / 2, 0);
+	this.iterator.drawAt (ctx, (iteratorSize.width - size.width)/2, (size.height - iteratorSize.height) / 2);
+}
+
+p.getSize = function (ctx) {
+	return this.sequence.getSize(ctx)
+		.addHorizontally(this.iterator.getSize(ctx))
+		.addHorizontally(this.separator, 4)
+		.addVertically(this.separator, 2);
+}
+
+// For.Iterator
+Dialecto.For.Iterator = function (counter, begin, end) {
+	this.counter = counter;
+	this.begin = begin;
+	this.end = end;
+}
+
+Dialecto.For.Iterator.prototype = p = new Dialecto.Element();
+
+p.getRects = function (ctx) {
+	var beginRect = new Rect(ctx.measureText(this.begin));
+	var endRect = new Rect(ctx.measureText(this.end));
+	var counterRect = new Rect(ctx.measureText(this.counter));
+	var size = beginRect.size.copy()
+		.addHorizontally(endRect.size)
+		.addHorizontally(this.separator, 4)
+		.addVertically(counterRect.size.copy().addHorizontally(this.separator, 2))
+		.addVertically(this.separator, 4);
+	var maxSize = Math.max(size.width, size.height);
+	var rect = new Rect(new Size2D(maxSize, maxSize));
+	counterRect.origin.y = maxSize / 2 - counterRect.size.height - this.separator.height;
+	beginRect.origin.y = endRect.origin.y = maxSize / 2 + this.separator.height;
+	beginRect.origin.x = -(beginRect.size.width + endRect.size.height) / 2 - this.separator.width;
+	endRect.origin.x = beginRect.getTopRight().x + this.separator.width * 2;
+	return {
+		counter: counterRect,
+		begin: beginRect,
+		end: endRect,
+		size: rect
+	};
+}
+
+p.draw = function (ctx) {
+	var r = this.getRects(ctx);
+	var radius = r.size.size.width / 2;
+	var middleLineX = r.begin.getTopRight().x + this.separator.width;
+	var middleLineMaxY = Math.sin(Math.acos(middleLineX / radius)) * radius + radius;
+	
+	ctx.drawCircle(0, radius, radius);
+	
+	ctx.beginPath();
+	ctx.moveTo(-radius,radius);
+	ctx.lineTo(radius,radius);
+	ctx.moveTo(middleLineX,radius);
+	ctx.lineTo(middleLineX,middleLineMaxY);
+	ctx.stroke();
+
+	ctx.fillText (this.counter, r.counter.getTopLeft().round());
+	ctx.fillText (this.begin, r.begin.getTopLeft().round());
+	ctx.fillText (this.end, r.end.getTopLeft().round());
+}
+
+p.getSize = function (ctx) {
+	var size = ctx.measureText(this.begin)
+		.addHorizontally(ctx.measureText(this.end))
+		.addHorizontally(this.separator, 4)
+		.addVertically(ctx.measureText(this.counter).addHorizontally(this.separator, 2))
+		.addVertically(this.separator, 4);
+	var maxSize = Math.max(size.width, size.height);
+	return new Size2D(maxSize, maxSize);
 }

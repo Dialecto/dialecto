@@ -34,10 +34,21 @@
 	decision = new Dialecto.If("a b c d e f g h i j k l m n o p q r s t u v w x y z A B C");
 	decision.left.add (new Dialecto.Assignment("y", "\"Emanuel Andrada\""));
 	mientras = new Dialecto.While("a > b"); 
-	mientras.sequence.add (new Dialecto.Assignment("nombre", "23"));
-	mientras.sequence.add (new Dialecto.Assignment("edad", "26"));
-	decision.right.add(mientras);
-	
+	mientras.sequence.add(new Dialecto.Assignment("edad", "26"));
+	mientras.sequence.add(new Dialecto.Assignment("edad", "26"));
+	mientras.sequence.add(new Dialecto.Assignment("edad", "26"));
+	decision.left.add(mientras);
+	bucle = new Dialecto.For("i", "asdsadsadasd", "10"); 
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("nombre", "23"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	bucle.sequence.add (new Dialecto.Assignment("edad", "26"));
+	decision.right.add(bucle);
 	ctx.reset();
 	size = decision.getSize(ctx);
 	ctx.canvas.style.width = size.width + 2 + "px";

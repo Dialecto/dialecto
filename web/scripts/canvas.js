@@ -60,6 +60,10 @@ p.measureText = function (text) {
 }
 
 p.fillText = function (text, x, y) {
+	if (x instanceof Point2D) {
+		y = x.y;
+		x = x.x;
+	}
 	this.context.fillStyle = this.textFillStyle;
 	this.context.fillText (text, x? x: 0, (y? y: 0) + this.fontSize);
 	this.context.fillStyle = this.fillStyle;
@@ -92,6 +96,14 @@ p.drawArrow = function (x1, y1, x2, y2, weight, color) {
 	if (color) {
 		ctx.fillStyle = this.fillStyle;
 	}
+}
+
+p.drawCircle = function(x, y, radius) {
+	var ctx = this.context;
+	ctx.beginPath();
+	ctx.arc(x, y, radius, 0 , 2 * Math.PI, false);
+	ctx.fill();
+	ctx.stroke();
 }
 
 p.setFillStyle = function (style) {
@@ -156,6 +168,12 @@ Point2D.prototype.translate = function (x, y) {
 Point2D.prototype.scale = function (s) {
 	this.x *= s;
 	this.y *= s;
+	return this;
+}
+
+Point2D.prototype.round = function () {
+	this.x = Math.round(this.x);
+	this.y = Math.round(this.y);
 	return this;
 }
 
