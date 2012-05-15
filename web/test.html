@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Dialecto Test</title>
+<script type='text/javascript' src='scripts/canvas.js'></script>
+<script type='text/javascript' src='scripts/dialecto.js'></script>
+</head>
+<body>
+<canvas id="board" width="900" height="900" />
+<script>
+	ctx = new Context2D("board");
+	ctx.translate(ctx.canvas.width / 2, 1);
+	decision = new Dialecto.If("a > b");
+	decision.left.add (new Dialecto.Assignment("y", "x * 2"));
+	decision.right.add (new Dialecto.Assignment("nombre", "\"Emanuel Andrada\""));
+	decision.right.add (new Dialecto.Assignment("edad", "26"));
+	decision.draw(ctx);
+</script>
+</body>
+</html>

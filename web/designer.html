@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Dialecto Designer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></link>
+<meta content="yes" name="apple-mobile-web-app-capable"></meta>
+<link rel="stylesheet" href="css/designer.css" type="text/css"></link>
+<script type='text/javascript' src='scripts/canvas.js'></script>
+<script type='text/javascript' src='scripts/dialecto.js'></script>
+</head>
+<body>
+<div id="screen">
+	<div class="paper">
+		<div class="stub">
+			<div id="boardContainer">
+				<canvas id="board" width="900" height="900"></canvas>
+			</div>
+		</div>
+	</div>
+	<div id="toolbar">
+		<div class="title">Dialecto Web</div>
+		<button></button>
+	</div>
+	<div id="toolbox">
+		<button class="assign">
+		</button><button class="if">
+		</button>
+	</div>
+</div>
+<script>
+	var pixelRatio = window.devicePixelRatio || 1;
+		
+	ctx = new Context2D("board");
+	decision = new Dialecto.If("a b c d e f g h i j k l m n o p q r s t u v w x y z A B C");
+	decision.left.add (new Dialecto.Assignment("y", "\"Emanuel Andrada\""));
+	mientras = new Dialecto.While("a > b"); 
+	mientras.sequence.add (new Dialecto.Assignment("nombre", "23"));
+	mientras.sequence.add (new Dialecto.Assignment("edad", "26"));
+	decision.right.add(mientras);
+	
+	ctx.reset();
+	size = decision.getSize(ctx);
+	ctx.canvas.style.width = size.width + 2 + "px";
+	ctx.canvas.style.height = size.height + 2 + "px";
+	ctx.canvas.width = (size.width + 2) * pixelRatio;
+	ctx.canvas.height = (size.height + 2) * pixelRatio;
+	ctx.reset();
+	ctx.context.scale(pixelRatio, pixelRatio);
+	ctx.translate(size.width / 2 + 1, 1);
+	decision.draw(ctx);
+	
+	ctx.canvas.onclick = function (e) {
+		var x = this.width / pixelRatio / 2;
+		var y = 1;
+		alert (decision.hitTest(ctx, this.pointWithEvent(e).translate(-x, -y)));
+	}
+</script>
+</body>
+</html>
